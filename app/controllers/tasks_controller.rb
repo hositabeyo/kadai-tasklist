@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   before_action :set_tasks, only: [:show, :edit, :update, :destroy]
   def index
-    @tasks = Task.all
+    @tasks = Task.all.page(params[:page]).per(3)
   end
   
   def show
@@ -31,7 +31,7 @@ class TasksController < ApplicationController
       flash[:saccess] = 'Task が正常に更新されました'
       redirect_to @task
     else
-      flash:now[:danger] = 'Task が更新されませんでした'
+      flash.now[:danger] = 'Task が更新されませんでした'
       render :edit
     end
   end
