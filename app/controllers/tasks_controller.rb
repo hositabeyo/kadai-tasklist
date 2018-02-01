@@ -1,7 +1,10 @@
 class TasksController < ApplicationController
   before_action :set_tasks, only: [:show, :edit, :update, :destroy]
+
   def index
-    @tasks = Task.all.page(params[:page]).per(3)
+    if logged_in?
+      @tasks = current_user.tasks.page(params[:page]).per(3)
+    end
   end
   
   def show
@@ -12,7 +15,7 @@ class TasksController < ApplicationController
   end
   
   def create
-    @task = Task.new(task_params)
+    @task = current_user.tasks.build(task_params)
     
     if @task.save
       flash[:saccess] = 'Task が正常に登録されました'
@@ -47,11 +50,11 @@ class TasksController < ApplicationController
 
   def set_tasks
      @task = Task.find(params[:id])
+     redirect_to root_url if @task.user != current_user
   end
 
 #Strong Parameter
   def task_params
     params.require(:task).permit(:content, :status)
   end
-
 end
